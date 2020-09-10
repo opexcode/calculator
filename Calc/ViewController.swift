@@ -28,9 +28,11 @@ class ViewController: UIViewController {
 			let doubleValue = String(newValue)
 			if doubleValue.contains(".") {
 				let intValues = doubleValue.components(separatedBy: ".")
-				displayLabel.text = (intValues[1] == "0") ? intValues[0] : doubleValue
-				userTyping = false
-			}
+                displayLabel.text = (intValues[1] == "0") ? intValues[0] : doubleValue
+            } else {
+                displayLabel.text = doubleValue
+            }
+            userTyping = false
 		}
 	}
 	
@@ -58,23 +60,29 @@ class ViewController: UIViewController {
 	
 	@objc
 	func inputCorrection(sender: UITapGestureRecognizer) {
-		if displayLabel.text != "0" || displayLabel.text == "0."  {
-			if displayLabel.text?.count == 1 {
-				displayLabel.text = "0"
-				userTyping = false
-			} else {
-				// Стираем последний символ свайпом
-				displayLabel.text = String(displayLabel.text!.dropLast())
+		let length = displayLabel.text?.count
+		
+		if length == 1 || (displayValue < 0 && length == 2) || (displayLabel.text == "-0") {
+			displayLabel.text = "0"
+			userTyping = false
+			separator = false
+		} else {
+			// Стираем последний символ свайпом
+			let lastSimbol = displayLabel.text!.last
+			if lastSimbol == "." {
+				separator = false
 			}
+			let simbol = String(displayLabel.text!.dropLast())
+			displayLabel.text = simbol
 		}
 	}
 	
-	
 	func showResult() {
-		if userTyping {
-			secondOperand = displayValue
-		}
-		
+        if userTyping {
+            secondOperand = displayValue
+        }
+        
+        
 		switch operatorSign {
 			case "÷":
 				if secondOperand == 0 {
@@ -92,9 +100,8 @@ class ViewController: UIViewController {
 				break
 		}
 		
+        
 		firstOperand = displayValue
-		userTyping = false
-		separator = false
 	}
 	
 	
@@ -111,9 +118,19 @@ class ViewController: UIViewController {
 	}
 	
 	@IBAction func mathSignInverseButton(_ sender: UIButton) {
-		if displayValue != 0 {
+		let str = displayLabel.text!
+        
+		if displayValue == 0 {
+            if str.first == "-" {
+                displayLabel.text = String(str.dropFirst())
+            } else {
+                displayLabel.text = "-\(str)"
+            }
+		} else {
 			displayValue = -displayValue
 		}
+		// Для продолжения ввода после смены знака
+		userTyping = true
 	}
 	
 	@IBAction func percentButton(_ sender: UIButton) {
@@ -128,16 +145,21 @@ class ViewController: UIViewController {
 	
 	@IBAction func digitButtons(_ sender: UIButton) {
 		let digit = sender.currentTitle!
+		let inputLimit = (displayValue < 0) ? 10 : 9
+		
+		// Запрещаем повторять 0
+		if displayLabel.text == "0" || displayLabel.text == "-0" {
+			userTyping = false
+		}
 		
 		if userTyping {
-			// Ограничиваем количество вводимых символов (до 10)
-			// и запрещаем повторять 0
-			if (displayLabel.text?.count)! < 10 && displayLabel.text != "0" {
+			// Ограничиваем количество вводимых символов
+			if (displayLabel.text?.count)! < inputLimit {
 				displayLabel.text = displayLabel.text! + digit
 			}
 		} else {
-			displayLabel.text = digit
-			userTyping = true
+				displayLabel.text = digit
+				userTyping = true
 		}
 	}
 	
@@ -171,7 +193,4 @@ class ViewController: UIViewController {
 	}
 	
 }
-
-
-
 
