@@ -9,44 +9,28 @@ class ViewController: UIViewController {
 	
 	// MARK: - Properties
 	
-	var firstOperand = 0.0
-	var secondOperand = 0.0
+	var firstOperand: String?
+	var secondOperand: String?
 	var userTyping = false
 	var separator = false
 	var operatorSign = ""
 	var continueСalculation = false
-	var displayValue: Double {
-		get {
-			var value = 0.0
-			if let optionalValue = Double(displayLabel.text!) {
-				value = optionalValue
-			}
-			return value
-		}
-		set {
-			// Если число целое выводим его без точки
-			let doubleValue = String(newValue)
-			if doubleValue.contains(".") {
-				let intValues = doubleValue.components(separatedBy: ".")
-                displayLabel.text = (intValues[1] == "0") ? intValues[0] : doubleValue
-            } else {
-                displayLabel.text = doubleValue
-            }
-            userTyping = false
+	var display = "0" {
+		didSet {
+			displayLabel.text = display
 		}
 	}
-	
 	
 	// MARK: - Lifecircle
 	
 	override func viewDidLoad() {
-		setCorrectSwipe()
+		setCorrectionSwipe()
 	}
 	
 	
 	// MARK: - Methods
 	
-	private func setCorrectSwipe() {
+	private func setCorrectionSwipe() {
 		let leftCorrectSwipe = UISwipeGestureRecognizer(target: self, action: #selector(inputCorrection))
 		let rightCorrectSwipe = UISwipeGestureRecognizer(target: self, action: #selector(inputCorrection))
 		
@@ -60,112 +44,96 @@ class ViewController: UIViewController {
 	
 	@objc
 	func inputCorrection(sender: UITapGestureRecognizer) {
-		let length = displayLabel.text?.count
-		
-		if length == 1 || (displayValue < 0 && length == 2) || (displayLabel.text == "-0") {
-			displayLabel.text = "0"
+		let length = display.count
+		guard let displayValue = Decimal(string: display) else { return }
+		if length == 1 || (display == "0.") || (display == "-0")
+			|| (displayValue < 0 && length == 2) {
+			display = "0"
 			userTyping = false
 			separator = false
 		} else {
 			// Стираем последний символ свайпом
-			let lastSimbol = displayLabel.text!.last
+			let lastSimbol = display.last
 			if lastSimbol == "." {
 				separator = false
 			}
-			let simbol = String(displayLabel.text!.dropLast())
-			displayLabel.text = simbol
+			
+			let simbol = display.dropLast()
+			display = String(simbol)
 		}
 	}
 	
-	func showResult() {
-        if userTyping {
-            secondOperand = displayValue
-        }
-        
-        
-		switch operatorSign {
-			case "÷":
-				if secondOperand == 0 {
-					displayLabel.text = "Ошибка"
-				} else {
-					displayValue = firstOperand / secondOperand
-			}
-			case "×":
-				displayValue = firstOperand * secondOperand
-			case "-":
-				displayValue = firstOperand - secondOperand
-			case "+":
-				displayValue = firstOperand + secondOperand
-			default:
-				break
-		}
-		
-        
-		firstOperand = displayValue
-	}
 	
+	func clearAll() {
+		userTyping = false
+		separator = false
+		continueСalculation = false
+		firstOperand = nil
+		secondOperand = nil
+		operatorSign = ""
+	}
 	
 	// MARK: - IBActions
 	
 	@IBAction func clearButton(_ sender: UIButton) {
-		displayLabel.text = "0"
-		userTyping = false
-		separator = false
-		continueСalculation = false
-		firstOperand = 0.0
-		secondOperand = 0.0
-		operatorSign = ""
+		display = "0"
+		clearAll()
 	}
 	
 	@IBAction func mathSignInverseButton(_ sender: UIButton) {
-		let str = displayLabel.text!
-        
-		if displayValue == 0 {
-            if str.first == "-" {
-                displayLabel.text = String(str.dropFirst())
-            } else {
-                displayLabel.text = "-\(str)"
-            }
+		guard let displayValue = Decimal(string: display) else { return }
+		
+		if Decimal(string: display)! == 0 {
+			if display.first == "-" {
+				display = String(display.dropFirst())
+			} else {
+				display = "-\(display)"
+			}
 		} else {
-			displayValue = -displayValue
+			display = "\(-displayValue)"
 		}
-		// Для продолжения ввода после смены знака
-		userTyping = true
+		secondOperand = display
 	}
 	
 	@IBAction func percentButton(_ sender: UIButton) {
-		if firstOperand == 0 {
-			displayValue = displayValue / 100
-		} else {
-			secondOperand = firstOperand * displayValue / 100
-			displayValue = secondOperand
+		
+		if let display = Decimal(string: display) {
+			if firstOperand == nil {
+				self.display = "\(display / 100)"
+			} else {
+				guard let decimalFirst = Decimal(string: firstOperand!) else { return }
+				secondOperand = "\(decimalFirst * display / 100)"
+				self.display = secondOperand!
+			}
 		}
+		
 		userTyping = false
 	}
 	
 	@IBAction func digitButtons(_ sender: UIButton) {
-		let digit = sender.currentTitle!
-		let inputLimit = (displayValue < 0) ? 10 : 9
-		
-		// Запрещаем повторять 0
-		if displayLabel.text == "0" || displayLabel.text == "-0" {
-			userTyping = false
-		}
-		
-		if userTyping {
-			// Ограничиваем количество вводимых символов
-			if (displayLabel.text?.count)! < inputLimit {
-				displayLabel.text = displayLabel.text! + digit
+		if let count = Decimal(string: display) {
+			// при отрицательном значении добавляем дополнительный символ на display
+			let inputLimit = (count < 0) ? 10 : 9
+			
+			if let digit = sender.currentTitle {
+				if (userTyping && display != "0") {
+					if display.count < inputLimit {
+						display = display + digit
+					}
+				} else {
+					display = digit
+					userTyping = true
+				}
 			}
-		} else {
-				displayLabel.text = digit
-				userTyping = true
 		}
+		
+		continueСalculation = true
 	}
 	
 	@IBAction func operationButtons(_ sender: UIButton) {
-		// Выводим промежуточный результат
+		
 		if continueСalculation {
+			secondOperand = display
 			showResult()
 		}
 		
@@ -173,24 +141,57 @@ class ViewController: UIViewController {
 			operatorSign = mathOperator
 		}
 		
+		firstOperand = display
 		userTyping = false
+		continueСalculation = false
 		separator = false
-		firstOperand = displayValue
-		continueСalculation = true
 	}
 	
 	@IBAction func equalityButton(_ sender: UIButton) {
+		if userTyping {
+			secondOperand = display
+		}
+		
 		showResult()
+		firstOperand = display
+		userTyping = false
 		continueСalculation = false
+	}
+	
+	func showResult() {
+		var result: Decimal = 0.0
+		
+		if let first = firstOperand, let second = secondOperand {
+			if let decimalFirst = Decimal(string: first),
+				let decimalSecond = Decimal(string: second) {
+				switch operatorSign {
+					case "÷":
+						result = decimalFirst / decimalSecond
+					case "×":
+						result = decimalFirst * decimalSecond
+					case "-":
+						result = decimalFirst - decimalSecond
+					case "+":
+						result = decimalFirst + decimalSecond
+					default:
+						break
+				}
+				if operatorSign == "÷" && result.isNaN  {
+					display = "Ошибка"
+					clearAll()
+				} else {
+					display = "\(result)"
+				}
+			}
+		}
 	}
 	
 	@IBAction func separatorButton(_ sender: UIButton) {
 		if !separator {
-			displayLabel.text = userTyping ? (displayLabel.text! + ".") : "0."
+			display = userTyping ? (display + ".") : "0."
 			userTyping = true
 			separator = true
 		}
 	}
 	
 }
-
