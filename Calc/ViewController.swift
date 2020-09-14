@@ -33,6 +33,9 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         setCorrectionSwipe()
+		
+		// Для устройств с SafeArea
+		view.insetsLayoutMarginsFromSafeArea = false
     }
     
     

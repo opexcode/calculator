@@ -30,6 +30,7 @@ extension UIButton {
         UIView.animate(withDuration: 0.0,
                        delay: 0.0,
                        options: [
+						.curveLinear,
                         .autoreverse],
                        animations: { self.alpha = 1.5 },
                        completion: nil)
