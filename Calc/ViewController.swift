@@ -215,7 +215,10 @@ class ViewController: UIViewController {
             secondOperand = display
         }
         
-        showResult()
+		if operatorSign != "" {
+			showResult()
+		}
+		
         firstOperand = display
         userTyping = false
         continueСalculation = false
