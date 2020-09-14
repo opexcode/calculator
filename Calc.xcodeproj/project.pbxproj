@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		88859F0D250F12F2006834BF /* UIExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88859F0C250F12F2006834BF /* UIExtensions.swift */; };
 		FAC4939625064D5A00BC78AC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC4939525064D5A00BC78AC /* AppDelegate.swift */; };
 		FAC4939825064D5A00BC78AC /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC4939725064D5A00BC78AC /* SceneDelegate.swift */; };
 		FAC4939A25064D5A00BC78AC /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC4939925064D5A00BC78AC /* ViewController.swift */; };
@@ -16,6 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		88859F0C250F12F2006834BF /* UIExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIExtensions.swift; sourceTree = "<group>"; };
 		FAC4939225064D5A00BC78AC /* Calc.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Calc.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FAC4939525064D5A00BC78AC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FAC4939725064D5A00BC78AC /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -59,6 +61,7 @@
 				FAC4939525064D5A00BC78AC /* AppDelegate.swift */,
 				FAC4939725064D5A00BC78AC /* SceneDelegate.swift */,
 				FAC4939925064D5A00BC78AC /* ViewController.swift */,
+				88859F0C250F12F2006834BF /* UIExtensions.swift */,
 				FAC4939B25064D5A00BC78AC /* Main.storyboard */,
 				FAC4939E25064D5D00BC78AC /* Assets.xcassets */,
 				FAC493A025064D5D00BC78AC /* LaunchScreen.storyboard */,
@@ -141,6 +144,7 @@
 				FAC4939A25064D5A00BC78AC /* ViewController.swift in Sources */,
 				FAC4939625064D5A00BC78AC /* AppDelegate.swift in Sources */,
 				FAC4939825064D5A00BC78AC /* SceneDelegate.swift in Sources */,
+				88859F0D250F12F2006834BF /* UIExtensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -287,6 +291,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 95Q7BF5S85;
 				INFOPLIST_FILE = Calc/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -305,6 +310,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 95Q7BF5S85;
 				INFOPLIST_FILE = Calc/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
